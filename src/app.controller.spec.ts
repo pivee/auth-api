@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DataResponse } from './core/data-response/data-response';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -16,7 +17,12 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+      expect(appController.getHello()).toBeInstanceOf(DataResponse);
+      expect(appController.getHello()).toEqual(
+        expect.objectContaining({
+          data: expect.any(String),
+        }),
+      );
     });
   });
 });
