@@ -1,3 +1,5 @@
+import { DataResponse } from '@core/data-response/data-response';
+import { NotFoundError } from '@core/errors/not-found-error';
 import {
   Body,
   Controller,
@@ -11,8 +13,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { NotFoundError } from 'src/core/errors/not-found-error';
-import { DataResponse } from '../../../core/data-response/data-response';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { FindUserDto } from './dto/find-user.dto';

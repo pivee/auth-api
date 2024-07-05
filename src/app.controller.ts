@@ -1,6 +1,6 @@
+import { DataResponse } from '@core/data-response/data-response';
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { DataResponse } from './core/data-response/data-response';
 
 @Controller()
 export class AppController {

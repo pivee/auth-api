@@ -1,5 +1,5 @@
+import { Metadata } from '@core/metadata/metadata';
 import { ApiProperty } from '@nestjs/swagger';
-import { Metadata } from '../metadata/metadata';
 
 export class DataResponse<T> {
   @ApiProperty()
