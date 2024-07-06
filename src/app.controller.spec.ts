@@ -1,7 +1,7 @@
+import { DataResponse } from '@core/data-response/data-response';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DataResponse } from './core/data-response/data-response';
 
 describe('AppController', () => {
   let appController: AppController;
