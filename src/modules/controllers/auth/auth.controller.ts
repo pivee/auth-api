@@ -41,11 +41,5 @@ export class AuthController {
       signInDto.password,
     );
     return response.setHeader('Set-Cookie', cookie).send();
-  async signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
-    const cookie = await this.authService.signIn(
-      signInDto.username,
-      signInDto.password,
-    );
-    return response.setHeader('Set-Cookie', cookie).send();
   }
 }
