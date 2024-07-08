@@ -1,5 +1,4 @@
 import { DataResponse } from '@core/data-response/data-response';
-import { NotFoundError } from '@core/errors/not-found-error';
 import {
   Body,
   Controller,
@@ -7,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -44,36 +42,21 @@ export class UsersController {
   @Get(':id')
   @ApiOkResponse({ description: 'Find one user', type: FindUserDto })
   async findOne(@Param('id') id: string) {
-    try {
-      const user = await this.usersService.findOne({ id });
-      delete user.password;
-      return new DataResponse(user);
-    } catch (error) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException(error.message);
-    }
+    const user = await this.usersService.findOne({ id });
+    delete user.password;
+    return new DataResponse(user);
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    try {
-      return new DataResponse(
-        await this.usersService.update({ where: { id }, data: updateUserDto }),
-      );
-    } catch (error) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException(error.message);
-    }
+    return new DataResponse(
+      await this.usersService.update({ where: { id }, data: updateUserDto }),
+    );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    try {
-      return new DataResponse(await this.usersService.remove({ id }));
-    } catch (error) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException(error.message);
-    }
+    return new DataResponse(await this.usersService.remove({ id }));
   }
 }
