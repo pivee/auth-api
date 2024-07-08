@@ -13,7 +13,12 @@ export class UsersService {
   ) {}
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
-    const user = await this.findOne({ email: data.email });
+    let user;
+    try {
+      user = await this.findOne({ email: data.email });
+    } catch (error) {
+      if (error instanceof UserNotFoundError === false) throw error;
+    }
     if (user) throw new UserAlreadyExistsError(data.email);
     return this.prisma.user.create({
       data: {
