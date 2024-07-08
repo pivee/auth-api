@@ -9,6 +9,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -19,6 +20,15 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   verify(@Headers('Authorization') authorizationHeader: string) {
     return this.authService.verify(authorizationHeader.split(' ')[1]);
+  }
+
+  @Post('sign-up')
+  signUp(@Body() signUpDto: SignUpDto) {
+    return this.authService.signUp(
+      signUpDto.email,
+      signUpDto.password,
+      signUpDto.name,
+    );
   }
 
   @Post('sign-in')

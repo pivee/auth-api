@@ -16,6 +16,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  async signUp(email: string, password: string, name: string) {
+    const user = await this.usersService.create({
+      email: email,
+      password: password,
+      name: name,
+    });
+
+    return user;
+  }
+
   async signIn(
     username: string,
     password: string,

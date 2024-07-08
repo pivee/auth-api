@@ -3,6 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../../../modules/prisma/prisma.service';
 import { UserNotFoundError } from './errors/user-not-found-error';
 import { CryptoService } from '@modules/crypto/crypto.service';
+import { UserAlreadyExistsError } from './errors/user-already-exists';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,8 @@ export class UsersService {
   ) {}
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
+    const user = await this.findOne({ email: data.email });
+    if (user) throw new UserAlreadyExistsError(data.email);
     return this.prisma.user.create({
       data: {
         ...data,

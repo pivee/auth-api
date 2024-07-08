@@ -1,6 +1,9 @@
+import { ConflictError } from '@core/errors/conflict-error';
 import { UnauthorizedError } from '@core/errors/unauthorized-error';
 import {
+  BadRequestException,
   CallHandler,
+  ConflictException,
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
@@ -24,6 +27,15 @@ export class KnownErrorInterceptor implements NestInterceptor {
           throw new NotFoundException(error.message);
         } else if (error instanceof UnauthorizedError) {
           throw new UnauthorizedException(error.message);
+        } else if (error instanceof ConflictError) {
+          throw new ConflictException(error.message);
+        } else if (error instanceof BadRequestException) {
+          const validationErrors = (error.getResponse() as any).message;
+          let message: string;
+          if (validationErrors && Array.isArray(validationErrors)) {
+            message = validationErrors.join(', ');
+          }
+          throw new BadRequestException(message ?? error.message);
         } else {
           this.logger.error(error);
           throw new InternalServerErrorException();
