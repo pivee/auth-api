@@ -9,10 +9,14 @@ export class RequestLoggerMiddleware implements NestMiddleware {
     const { method, originalUrl } = request;
     const start = Date.now();
 
+    const requestId = request.headers['x-request-id'] as string;
+
     response.on('finish', () => {
       const { statusCode } = response;
       const duration = Date.now() - start;
-      this.logger.log(`${method} ${originalUrl} ${statusCode} - ${duration}ms`);
+      this.logger.log(
+        `${method} ${originalUrl} ${statusCode} - ${duration}ms [${requestId}]`,
+      );
     });
 
     next();

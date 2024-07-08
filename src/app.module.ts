@@ -11,6 +11,7 @@ import { KnownErrorInterceptor } from './error-handling/known-error.interceptor'
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import * as Joi from 'joi';
+import { RequestIdMiddleware } from './middleware/request-id.middleware';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import * as Joi from 'joi';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
     consumer.apply(RequestLoggerMiddleware).forRoutes('*');
   }
 }
