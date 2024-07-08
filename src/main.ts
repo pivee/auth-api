@@ -17,6 +17,10 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  app.enableCors({
+    origin: process.env.CORS_ORIGINS,
+  });
+
   await app.listen(3000);
 }
 bootstrap();
