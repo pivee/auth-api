@@ -4,11 +4,12 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -19,12 +20,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  verify(@Req() request: Request) {
-    const token = request?.cookies?.Authentication;
-
-    return this.authService.verify(token);
-  }
+  authenticate() {}
 
   @Post('sign-up')
   signUp(@Body() signUpDto: SignUpDto) {

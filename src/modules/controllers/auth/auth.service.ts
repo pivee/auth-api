@@ -43,7 +43,7 @@ export class AuthService {
     );
   }
 
-  async verify(token: string): Promise<void> {
+  async verify(token: string): Promise<boolean> {
     try {
       await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
@@ -54,9 +54,9 @@ export class AuthService {
          */
         ignoreExpiration: true,
       });
-      return;
+      return true;
     } catch (error) {
-      throw new UnauthorizedError();
+      return false;
     }
   }
 
