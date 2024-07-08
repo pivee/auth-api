@@ -1,11 +1,11 @@
 import { UnauthorizedError } from '@core/errors/unauthorized-error';
+import { AccessTokenPayload } from '@core/jwt/access-token-payload';
 import { CryptoService } from '@modules/crypto/crypto.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UsersService } from '../users/users.service';
-import { AccessTokenPayload } from '@core/jwt/access-token-payload';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +37,18 @@ export class AuthService {
         expiresIn: '300s',
       }),
     };
+  }
+
+  async verify(token: string): Promise<void> {
+    try {
+      await this.jwtService.verify(token, {
+        secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        ignoreExpiration: false,
+      });
+      return;
+    } catch (error) {
+      throw new UnauthorizedError();
+    }
   }
 
   private async validateUser(user: User, password: string) {
