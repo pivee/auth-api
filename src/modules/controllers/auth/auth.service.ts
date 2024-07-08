@@ -26,10 +26,7 @@ export class AuthService {
     return user;
   }
 
-  async signIn(
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async signIn(username: string, password: string): Promise<string> {
     const user = await this.usersService.findOne({ email: username });
 
     if (!(await this.validateUser(user, password))) {
@@ -41,12 +38,9 @@ export class AuthService {
       new AccessTokenPayload(user.id, { username: user.email }),
     );
 
-    return {
-      access_token: await this.jwtService.signAsync(payload, {
-        secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: '300s',
-      }),
-    };
+    return this.generateAccessTokenCookie(
+      (await this.generateAccessToken(payload)).access_token,
+    );
   }
 
   async verify(token: string): Promise<void> {
@@ -68,5 +62,23 @@ export class AuthService {
 
   private async validateUser(user: User, password: string) {
     return await this.cryptoService.compareHashes(password, user.password);
+  }
+
+  private async generateAccessToken(payload: AccessTokenPayload) {
+    return {
+      access_token: await this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_TTL'),
+      }),
+    };
+  }
+
+  private async generateAccessTokenCookie(token: string) {
+    return [
+      `Authentication=${token}`,
+      `HttpOnly`,
+      `Path=/`,
+      `Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_TTL')}`,
+    ].join('; ');
   }
 }

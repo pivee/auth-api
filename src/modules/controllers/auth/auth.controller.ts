@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
-  Headers,
   HttpCode,
   HttpStatus,
   Post,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -18,8 +20,10 @@ export class AuthController {
 
   @Post()
   @HttpCode(HttpStatus.NO_CONTENT)
-  verify(@Headers('Authorization') authorizationHeader: string) {
-    return this.authService.verify(authorizationHeader?.split(' ')[1]);
+  verify(@Req() request: Request) {
+    const token = request?.cookies?.Authentication;
+
+    return this.authService.verify(token);
   }
 
   @Post('sign-up')
@@ -33,7 +37,11 @@ export class AuthController {
 
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
+    const cookie = await this.authService.signIn(
+      signInDto.username,
+      signInDto.password,
+    );
+    return response.setHeader('Set-Cookie', cookie).send();
   }
 }

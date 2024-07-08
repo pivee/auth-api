@@ -26,6 +26,7 @@ import { CryptoModule } from './modules/crypto/crypto.module';
         CORS_ORIGINS: Joi.string().default('*'),
         DATABASE_URL: Joi.string(),
         JWT_ACCESS_TOKEN_SECRET: Joi.string(),
+        JWT_ACCESS_TOKEN_TTL: Joi.string().default('300s'),
       }),
       validationOptions: {
         allowUnknown: true,
