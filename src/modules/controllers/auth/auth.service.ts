@@ -49,6 +49,12 @@ export class AuthService {
     };
   }
 
+  async signOut(): Promise<{ cookie: string }> {
+    return {
+      cookie: this.generateCleanUpCookie(),
+    };
+  }
+
   async verify(token: string): Promise<boolean> {
     try {
       await this.jwtService.verify(token, {
@@ -86,5 +92,9 @@ export class AuthService {
       `Path=/`,
       `Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_TTL')}`,
     ].join('; ');
+  }
+
+  private generateCleanUpCookie() {
+    return [`Authentication=`, `HttpOnly`, `Path=/`, `Max-Age=`].join('; ');
   }
 }

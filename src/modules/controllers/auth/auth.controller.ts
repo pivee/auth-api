@@ -44,4 +44,11 @@ export class AuthController {
     );
     return response.setHeader('Set-Cookie', cookie).send({ user });
   }
+
+  @Post('sign-out')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async signOut(@Res() response: Response) {
+    const { cookie } = await this.authService.signOut();
+    return response.setHeader('Set-Cookie', cookie).send();
+  }
 }
