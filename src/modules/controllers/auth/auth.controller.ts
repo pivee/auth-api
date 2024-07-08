@@ -21,8 +21,10 @@ export class AuthController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  authenticate() {}
+  @HttpCode(HttpStatus.OK)
+  authenticate() {
+    return { isAuthenticated: true };
+  }
 
   @Post('sign-up')
   signUp(@Body() signUpDto: SignUpDto) {
@@ -36,10 +38,10 @@ export class AuthController {
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
-    const cookie = await this.authService.signIn(
+    const { user, cookie } = await this.authService.signIn(
       signInDto.username,
       signInDto.password,
     );
-    return response.setHeader('Set-Cookie', cookie).send();
+    return response.setHeader('Set-Cookie', cookie).send({ user });
   }
 }

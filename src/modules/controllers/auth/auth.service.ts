@@ -26,7 +26,10 @@ export class AuthService {
     return user;
   }
 
-  async signIn(username: string, password: string): Promise<string> {
+  async signIn(
+    username: string,
+    password: string,
+  ): Promise<{ user: User; cookie: string }> {
     const user = await this.usersService.findOne({ email: username });
 
     if (!(await this.validateUser(user, password))) {
@@ -38,9 +41,12 @@ export class AuthService {
       new AccessTokenPayload(user.id, { username: user.email }),
     );
 
-    return this.generateAccessTokenCookie(
-      (await this.generateAccessToken(payload)).access_token,
-    );
+    return {
+      user,
+      cookie: this.generateAccessTokenCookie(
+        (await this.generateAccessToken(payload)).access_token,
+      ),
+    };
   }
 
   async verify(token: string): Promise<boolean> {
@@ -73,7 +79,7 @@ export class AuthService {
     };
   }
 
-  private async generateAccessTokenCookie(token: string) {
+  private generateAccessTokenCookie(token: string) {
     return [
       `Authentication=${token}`,
       `HttpOnly`,
