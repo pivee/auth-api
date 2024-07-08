@@ -19,7 +19,7 @@ export class AuthController {
   @Post()
   @HttpCode(HttpStatus.NO_CONTENT)
   verify(@Headers('Authorization') authorizationHeader: string) {
-    return this.authService.verify(authorizationHeader.split(' ')[1]);
+    return this.authService.verify(authorizationHeader?.split(' ')[1]);
   }
 
   @Post('sign-up')
