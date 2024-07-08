@@ -5,6 +5,7 @@ import * as metadata from 'package.json';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,10 +23,12 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: configService.get('CORS_ORIGINS'),
+    origin: true ?? configService.get('CORS_ORIGINS'),
   });
 
   app.useGlobalPipes(new ValidationPipe());
+
+  app.use(cookieParser());
 
   await app.listen(3000);
 }
