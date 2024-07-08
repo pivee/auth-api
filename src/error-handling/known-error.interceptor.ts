@@ -1,3 +1,4 @@
+import { UnauthorizedError } from '@core/errors/unauthorized-error';
 import {
   CallHandler,
   ExecutionContext,
@@ -6,6 +7,7 @@ import {
   Logger,
   NestInterceptor,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -20,6 +22,8 @@ export class KnownErrorInterceptor implements NestInterceptor {
       catchError((error: Error) => {
         if (error instanceof NotFoundError) {
           throw new NotFoundException(error.message);
+        } else if (error instanceof UnauthorizedError) {
+          throw new UnauthorizedException(error.message);
         } else {
           this.logger.error(error);
           throw new InternalServerErrorException();
