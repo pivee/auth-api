@@ -2,14 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../../../modules/prisma/prisma.service';
 import { UserNotFoundError } from './errors/user-not-found-error';
+import { CryptoService } from '@modules/crypto/crypto.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cryptoService: CryptoService,
+  ) {}
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        password: await this.cryptoService.createHash(data.password, 10),
+      },
     });
   }
 

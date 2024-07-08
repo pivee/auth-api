@@ -12,6 +12,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware'
 import { PrismaModule } from './modules/prisma/prisma.module';
 import * as Joi from 'joi';
 import { RequestIdMiddleware } from './middleware/request-id.middleware';
+import { CryptoModule } from './modules/crypto/crypto.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { RequestIdMiddleware } from './middleware/request-id.middleware';
     AuthModule,
     PrismaModule,
     UsersModule,
+    CryptoModule,
   ],
   controllers: [AppController],
   providers: [

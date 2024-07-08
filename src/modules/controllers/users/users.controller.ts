@@ -25,7 +25,9 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
-    return new DataResponse(await this.usersService.create(createUserDto));
+    const user = await this.usersService.create(createUserDto);
+    delete user.password;
+    return new DataResponse(user);
   }
 
   @Get()
