@@ -2,7 +2,7 @@ import { DataResponse } from '@core/data-response/data-response';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
 
-export class FindAllUsersDto extends DataResponse<User[]> {
+export class FindAllUsersDto extends DataResponse<Omit<User, 'password'>[]> {
   @ApiProperty({ type: User, isArray: true })
-  public data: User[];
+  public data: Omit<User, 'password'>[];
 }

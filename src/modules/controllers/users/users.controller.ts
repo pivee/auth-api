@@ -33,14 +33,21 @@ export class UsersController {
   @Get()
   @ApiOkResponse({ description: 'List all users', type: FindAllUsersDto })
   async findAll(): Promise<FindAllUsersDto> {
-    return new DataResponse(await this.usersService.findAll({}));
+    return new DataResponse(
+      (await this.usersService.findAll({})).map((user) => {
+        delete user.password;
+        return user;
+      }),
+    );
   }
 
   @Get(':id')
   @ApiOkResponse({ description: 'Find one user', type: FindUserDto })
   async findOne(@Param('id') id: string) {
     try {
-      return new DataResponse(await this.usersService.findOne({ id }));
+      const user = await this.usersService.findOne({ id });
+      delete user.password;
+      return new DataResponse(user);
     } catch (error) {
       if (error instanceof NotFoundError)
         throw new NotFoundException(error.message);
