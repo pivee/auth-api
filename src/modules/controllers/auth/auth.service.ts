@@ -43,6 +43,11 @@ export class AuthService {
     try {
       await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        /**
+         * NOTE: I have set the token life time to 300s,
+         * but I'm ignoring expiration for this demo.
+         * TODO: Implement refresh token strategy later.
+         */
         ignoreExpiration: false,
       });
       return;
