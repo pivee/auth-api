@@ -1,73 +1,94 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Auth API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Auth backend starter using NestJS and Prisma.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Swagger UI: `{{baseUrl}}/api/docs`
+  - Local: http://localhost:3000/api/docs
 
 ## Installation
 
-```bash
-$ pnpm install
+1. **Clone the repository:**
+
+   ```bash
+   git clone <repository-url>
+   cd auth-api
+   ```
+
+2. **Create the `.env` file:**
+
+   ```bash
+    NODE_ENV="development"
+    DATABASE_URL="mongodb+srv://username:password@hostname/database?options="
+    CORS_ORIGINS="allowed_origins_as_comma_separated_values"
+    JWT_ACCESS_TOKEN_SECRET="access_key_secret"
+    JWT_ACCESS_TOKEN_EXPIRY="300s"
+   ```
+
+3. **Install the dependencies:**
+
+    ```bash
+    pnpm install
+    ```
+
+4. **Run the server:**
+
+    ```bash
+    pnpm start
+    ```
+
+### Description
+
+This NestJS project is for demoing a simple authentication server where the users can sign up using an email address and password with the following constraints.
+
+- Password requirements:
+  - Minimum length of 8 characters.
+  - Contains at least 1 letter.
+  - Contains at least 1 number.
+  - Contains at least 1 special character.
+
+After successful account creation, users can sign in using their credentials to receive their access token as a cookie.
+
+### Sign up and Sign in
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NestJS_Server
+    participant Database
+
+    Client ->> NestJS_Server: POST /sign-up { email, password }
+    Note over NestJS_Server: Validate password requirements
+    NestJS_Server ->> Database: Check if email exists
+    Database -->> NestJS_Server: Email availability
+    Note over NestJS_Server: If email exists, return error
+    NestJS_Server ->> NestJS_Server: Hash password
+    NestJS_Server ->> Database: Save new user { email, hashedPassword }
+    Database -->> NestJS_Server: Confirmation of user creation
+
+    Client ->> NestJS_Server: POST /sign-in { email, password }
+    Note over NestJS_Server: Validate credentials
+    NestJS_Server ->> Database: Retrieve user by email
+    Database -->> NestJS_Server: User data
+    Note over NestJS_Server: Compare hashed passwords
+    NestJS_Server -->> Client: Set JWT as HTTP-only cookie
 ```
 
-## Running the app
+### Authentication Flow
 
-```bash
-# development
-$ pnpm run start
+```mermaid
+sequenceDiagram
+    participant Client
+    participant NestJS_Server
+    participant Auth_Service
+    participant Database
 
-# watch mode
-$ pnpm run start:dev
+    Client ->> NestJS_Server: POST /auth
+    Note over NestJS_Server: Cookie attached with JWT
+    NestJS_Server ->> Auth_Service: Validate JWT
+    Auth_Service -->> NestJS_Server: Validation result (valid/invalid)
+    Note over NestJS_Server: If valid, return 200
+    NestJS_Server -->> Client: 200: OK
+    Note over NestJS_Server: If invalid, return 403
+    NestJS_Server -->> Client: 403: Forbidden
 
-# production mode
-$ pnpm run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
