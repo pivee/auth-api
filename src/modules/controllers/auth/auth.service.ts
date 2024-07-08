@@ -48,7 +48,7 @@ export class AuthService {
          * but I'm ignoring expiration for this demo.
          * TODO: Implement refresh token strategy later.
          */
-        ignoreExpiration: false,
+        ignoreExpiration: true,
       });
       return;
     } catch (error) {
